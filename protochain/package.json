@@ -14,10 +14,14 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/jest": "^30.0.0",
     "jest": "^30.3.0",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "crypto-js": "^4.2.0"
   }
 }
