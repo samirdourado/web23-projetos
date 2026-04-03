@@ -11,7 +11,7 @@ export default interface BlockInfo {
     index: number;
     previousHash: string;
     difficulty: number;
-    maxDifficult: number;
+    maxDifficulty: number;
     feePerTx: number;
     data: string;
 }

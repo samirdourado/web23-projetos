@@ -70,7 +70,7 @@ export default class Blockchain {
         const previousHash = this.getLastBlock().hash;
         const index = this.blocks.length;
         const feePerTx = this.getFeePerTx();
-        const maxDifficult = Blockchain.MAX_DIFFICULTY;
+        const maxDifficulty = Blockchain.MAX_DIFFICULTY;
 
         return {
             data,
@@ -78,7 +78,7 @@ export default class Blockchain {
             previousHash,
             index,
             feePerTx,
-            maxDifficult
+            maxDifficulty
         } as BlockInfo;
     }
 
