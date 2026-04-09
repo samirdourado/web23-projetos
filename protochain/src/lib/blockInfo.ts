@@ -1,3 +1,5 @@
+import Transaction from "./transaction";
+
 /**
  * Blockchain interface
  * index: the position of the block in the chain
@@ -13,5 +15,5 @@ export default interface BlockInfo {
     difficulty: number;
     maxDifficulty: number;
     feePerTx: number;
-    data: string;
+    transaction: Transaction[];
 }
