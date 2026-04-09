@@ -1,6 +1,9 @@
 # Protochain
 
+
+
 ## English
+[Back to main](../README.md) | [Read in portuguese](#português)
 
 Protochain is a simple blockchain implementation built with TypeScript. It includes core components like blocks, blockchain validation, and a basic HTTP server for interacting with the blockchain.
 
@@ -77,6 +80,7 @@ Tests cover block validation, blockchain operations, and server endpoints.
 - **Development**: `@types/crypto-js`, `@types/express`, `@types/jest`, `@types/morgan`, `@types/supertest`, `jest`, `supertest`, `ts-jest`, `ts-node`, `typescript`
 
 ## Português
+[Voltar](../README.md) | [Ler em inglês](#english)
 
 Protochain é uma implementação simples de blockchain construída com TypeScript. Inclui componentes principais como blocos, validação de blockchain e um servidor HTTP básico para interagir com a blockchain.
 
