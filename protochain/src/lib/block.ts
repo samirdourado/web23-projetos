@@ -27,7 +27,7 @@ export default class Block {
         this.previousHash = block?.previousHash || "";
 
         this.transactions = block?.transactions 
-            ? block?.transactions.map(tx => new Transaction(tx))
+            ? block.transactions.map(tx => new Transaction(tx))
             : [] as Transaction[]
         ;
 
@@ -71,8 +71,7 @@ export default class Block {
 
         if (this.transactions && this.transactions.length) {
             if (this.transactions.filter(tx => tx.type === TransactionType.FEE).length > 1)
-                return new Validation(false, "Too many fees")
-            ;
+                return new Validation(false, "Too many fees");
 
             const validations = this.transactions.map(tx => tx.isValid());
             const errors = validations.filter(v => !v.success).map(v => v.message);
@@ -98,7 +97,7 @@ export default class Block {
         const block = new Block();
         block.index = blockInfo.index;
         block.previousHash = blockInfo.previousHash;
-        block.transactions = blockInfo.transaction;
+        block.transactions = blockInfo.transactions;
         return block;
     }
 }

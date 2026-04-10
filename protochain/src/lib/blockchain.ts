@@ -119,8 +119,11 @@ export default class Blockchain {
         if (!this.mempool || !this.mempool.length)
             return null;
 
-        const transaction = this.mempool.slice(0, Blockchain.TX_PER_BLOCK);
+        // const transactions = [new Transaction({
+        //     data: new Date().toString()
+        // } as Transaction)];
 
+        const transactions = this.mempool.slice(0, Blockchain.TX_PER_BLOCK);
         const difficulty = this.getDifficulty();
         const previousHash = this.getLastBlock().hash;
         const index = this.blocks.length;
@@ -128,7 +131,7 @@ export default class Blockchain {
         const maxDifficulty = Blockchain.MAX_DIFFICULTY;
 
         return {
-            transaction,
+            transactions,
             difficulty,
             previousHash,
             index,
