@@ -1,6 +1,7 @@
 import Block from './block';
 import BlockInfo from './blockInfo';
 import Transaction from './transaction';
+import TransactionInput from './transactionInput';
 import TransactionSearch from './transactionSearch';
 import TransactionType from './transactionType';
 import Validation from './validation';
@@ -12,6 +13,7 @@ export default class Blockchain {
     blocks: Block[];
     mempool: Transaction[];
     nextIndex: number = 0;
+    
     static readonly DIFFICULT_FACTOR = 5;
     static readonly TX_PER_BLOCK = 2;
     static readonly MAX_DIFFICULTY = 62;
@@ -26,7 +28,7 @@ export default class Blockchain {
             previousHash: "",
             transactions: [new Transaction({
                 type: TransactionType.FEE,
-                data: new Date().toString()
+                txInput: new TransactionInput(),
             } as Transaction)]
         } as Block)];
         this.nextIndex++;

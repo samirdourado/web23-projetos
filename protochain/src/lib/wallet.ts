@@ -1,6 +1,5 @@
 import * as ecc from 'tiny-secp256k1';
 import ECPairFactory, { ECPairInterface } from 'ecpair';
-// import { Buffer } from 'buffer';
 
 const ECPair = ECPairFactory(ecc);
 
@@ -12,7 +11,7 @@ export default class Wallet {
     privateKey: string;
     publicKey: string;
 
-    constructor(wifOrPrivateKey: string) {
+    constructor(wifOrPrivateKey?: string) {
         let keys;
 
         if (wifOrPrivateKey) {
@@ -23,7 +22,8 @@ export default class Wallet {
         } else
             keys = ECPair.makeRandom();
 
-        this.privateKey = keys.privateKey ? Buffer.from(keys.privateKey).toString("hex") : "";
-        this.publicKey = Buffer.from(keys.publicKey).toString("hex");
+        /* c8 ignore next */
+        this.privateKey = keys.privateKey?.toString("hex") || "";
+        this.publicKey = keys.publicKey.toString("hex");
     }
 }
