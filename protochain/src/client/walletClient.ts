@@ -23,7 +23,7 @@ function menu() {
         console.clear();
 
         if (myWalletPub)
-            console.log(`You are logged as ${myWalletPub}.`);
+            console.log(`You are logged as ${myWalletPub}`);
         else
             console.log(`You aren't logged.`);
 
@@ -133,10 +133,12 @@ function sendTx() {
                 console.log(`Transaction accepted. Waiting the miners!`);
                 console.log(txResponse.data.hash);                
             } catch (err) {
+                // console.error(err.response ? err.response.data : err.message);
+                
                 if (axios.isAxiosError(err)) {
                     console.error(err.response ? err.response.data : err.message);
                 } else {
-                    console.error("Erro inesperado:", err)
+                    console.error("Erro inesperado:", err);
                 }
             }
 

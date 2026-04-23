@@ -39,7 +39,7 @@ export default class Blockchain {
     }
 
     getDifficulty(): number {
-        return Math.ceil(this.blocks.length / Blockchain.DIFFICULT_FACTOR);
+        return Math.ceil(this.blocks.length / Blockchain.DIFFICULT_FACTOR) + 1;
     }
 
     addTransaction(transaction: Transaction): Validation {
