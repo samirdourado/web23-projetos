@@ -31,12 +31,14 @@ function menu() {
         console.log("2 - Recover Wallet");
         console.log("3 - Balance");
         console.log("4 - Send tx");
+        console.log("5 - Search tx");
         rl.question("Choose your option: ", (answer) => {
             switch(answer) {
                 case "1": createWallet();break;
                 case "2": recoverWallet();break;
                 case "3": getBalance();break;
                 case "4": sendTx();break;
+                case "5": searchTx();break;
                 default: {
                     console.log('Wrong option!');
                     menu();
@@ -67,7 +69,7 @@ function createWallet() {
 
 function recoverWallet() {
     console.clear()
-    rl.question(`What is your private key or WIF ? `, (wifOrPrivateKey) => {
+    rl.question(`What is your private key or WIF ?`, (wifOrPrivateKey) => {
         const wallet = new Wallet(wifOrPrivateKey);
         console.log(`Your recovered wallet:`);
         console.log(wallet);
@@ -131,13 +133,26 @@ function sendTx() {
                 console.log(`Transaction accepted. Waiting the miners!`);
                 console.log(txResponse.data.hash);                
             } catch (err) {
-                console.error(err.response ? err.response.data : err.message);
+                if (axios.isAxiosError(err)) {
+                    console.error(err.response ? err.response.data : err.message);
+                } else {
+                    console.error("Erro inesperado:", err)
+                }
             }
 
             return preMenu();
         })
     })
     preMenu();
+}
+
+function searchTx() {
+    console.clear();
+    rl.question(`Your tx hash: `, async (hash) => {
+        const response = await axios.get(`${BLOCKCHAIN_SERVER}transactions/${hash}`);
+        console.log(response.data);
+        return preMenu();
+    })
 }
 
 menu();
