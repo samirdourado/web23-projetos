@@ -48,16 +48,26 @@ npm run dev
    npm start
    ```
 
-#### Running the Blockchain Server
+## Running project
 
-To start the blockchain server with logging:
+### To start the blockchain server with logging:
 
 ```bash
 npm run blockchain
 ```
-
 The server will run on port 3000.
 
+### To start the miner:
+
+```bash
+npm run miner
+```
+
+### To create and action wallet :
+
+```bash
+npm run wallet
+```
 ### API Endpoints
 
 - `GET /status`: Returns the status of the blockchain, including the number of blocks, validity, and the last block.
@@ -127,10 +137,22 @@ npm run dev
 
 #### Executando o Servidor da Blockchain
 
-Para iniciar o servidor da blockchain com logging:
+Para iniciar o servidor da blockchain:
 
 ```bash
 npm run blockchain
+```
+
+### Para iniciar o minerador:
+
+```bash
+npm run miner
+```
+
+### Para criar e fazer ações da wallet :
+
+```bash
+npm run wallet
 ```
 
 O servidor será executado na porta 3000.
