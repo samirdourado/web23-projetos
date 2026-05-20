@@ -2,15 +2,17 @@ import { describe, expect, test, jest } from '@jest/globals';
 import Transaction from '../src/lib/transaction';
 import TransactionType from '../src/lib/transactionType';
 import TransactionInput from '../src/lib/transactionInput';
+import TransactionOutput from '../src/lib/transactionOutput';
 
 jest.mock('../src/lib/transactionInput');
+jest.mock('../src/lib/transactionOutput');
 
 describe("Transaction tests", () => {
 
     test('Should be valid (REGULAR default)', () => {
         const tx = new Transaction({
-            txInput: new TransactionInput(),
-            to: 'carteiraTo'
+            txInputs: [new TransactionInput()],
+            txOutputs: [new TransactionOutput()]
         } as Transaction);
 
         const valid = tx.isValid();
@@ -19,8 +21,8 @@ describe("Transaction tests", () => {
 
     test('Should not be valid (invalid hash)', () => {
         const tx = new Transaction({
-            txInput: new TransactionInput(),
-            to: 'carteiraTo',
+            txInputs: [new TransactionInput()],
+            txOutputs: [new TransactionOutput()],
             type: TransactionType.REGULAR,
             timestamp: Date.now(),
             hash: 'abc'
@@ -32,12 +34,11 @@ describe("Transaction tests", () => {
 
     test('Should be valid (FEE)', () => {
         const tx = new Transaction({
-            txInput: new TransactionInput(),
-            to: 'carteiraTo',
+            txOutputs: [new TransactionOutput()],
             type: TransactionType.FEE
         } as Transaction);
 
-        tx.txInput = undefined;
+        tx.txInputs = undefined;
         tx.hash = tx.getHash();
 
         const valid = tx.isValid();
@@ -52,12 +53,12 @@ describe("Transaction tests", () => {
 
     test('Should not be valid (invalid txInput)', () => {
         const tx = new Transaction({
-            to: 'carteiraTo',
-            txInput: new TransactionInput({
+            txOutputs: [new TransactionOutput()],
+            txInputs: [new TransactionInput({
                 amount: -10,
                 fromAddress: 'carteiraFrom',
                 signature: 'abc'
-            } as TransactionInput)
+            } as TransactionInput)]
         } as Transaction);
         const valid = tx.isValid();
         expect(valid.success).toBeFalsy();
