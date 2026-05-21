@@ -28,8 +28,7 @@ export default class Block {
 
         this.transactions = block?.transactions 
             ? block.transactions.map(tx => new Transaction(tx))
-            : [] as Transaction[]
-        ;
+            : [] as Transaction[];
 
         this.nonce = block?.nonce || 0;
         this.miner = block?.miner || "";
@@ -41,7 +40,7 @@ export default class Block {
             ? this.transactions.map(tx => tx.hash).reduce((a, b) => a + b)
             : "";
 
-        return sha256(this.index + txs + this.timestamp + this.previousHash + this.nonce + this.miner).toString()
+        return sha256(this.index + txs + this.timestamp + this.previousHash + this.nonce + this.miner).toString();
     }
 
     /**
@@ -85,7 +84,6 @@ export default class Block {
 
             if (errors.length > 0)
                 return new Validation(false, "Invalid block due to invalid tx." + errors.reduce((a, b) => a + b));
-            ;
         };
 
         if (previousIndex !== this.index -1) return new Validation(false, "Invalid index.");

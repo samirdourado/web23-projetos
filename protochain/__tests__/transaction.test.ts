@@ -19,6 +19,32 @@ describe("Transaction tests", () => {
         expect(valid.success).toBeTruthy();
     })
 
+    test('Should not be valid (txo hash != tx hash)', () => {
+        const tx = new Transaction({
+            txInputs: [new TransactionInput()],
+            txOutputs: [new TransactionOutput()]
+        } as Transaction);
+
+        tx.txOutputs[0].tx = "aoba";
+
+        const valid = tx.isValid();
+        expect(valid.success).toBeFalsy();
+    })
+
+    test('Should not be valid (inputs < outputs)', () => {
+        const tx = new Transaction({
+            txInputs: [new TransactionInput({
+                amount: 1
+            } as TransactionInput)],
+            txOutputs: [new TransactionOutput({
+                amount: 2
+            } as TransactionOutput)]
+        } as Transaction);
+
+        const valid = tx.isValid();
+        expect(valid.success).toBeFalsy();
+    })
+
     test('Should not be valid (invalid hash)', () => {
         const tx = new Transaction({
             txInputs: [new TransactionInput()],
@@ -63,5 +89,4 @@ describe("Transaction tests", () => {
         const valid = tx.isValid();
         expect(valid.success).toBeFalsy();
     })
-    
 })
