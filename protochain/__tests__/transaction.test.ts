@@ -1,66 +1,159 @@
-import { describe, expect, test, jest } from '@jest/globals';
+import { describe, expect, test, jest, beforeAll } from '@jest/globals';
 import Transaction from '../src/lib/transaction';
 import TransactionType from '../src/lib/transactionType';
 import TransactionInput from '../src/lib/transactionInput';
+import TransactionOutput from '../src/lib/transactionOutput';
+import Wallet from '../src/lib/wallet';
 
 jest.mock('../src/lib/transactionInput');
+jest.mock('../src/lib/transactionOutput');
 
 describe("Transaction tests", () => {
 
+    const exampleDifficulty: number = 1;
+    const exampleFee: number = 1;
+    const exampleTx: string = "3bec7e171844aba34201a1f55392cd129c499e6ebaa3abe4b5fbc711e7c31bf1"
+    let alice: Wallet, bob: Wallet;
+
+    beforeAll(() => {
+        alice = new Wallet();
+        bob = new Wallet();
+    })
+
     test('Should be valid (REGULAR default)', () => {
         const tx = new Transaction({
-            txInput: new TransactionInput(),
-            to: 'carteiraTo'
+            txInputs: [new TransactionInput()],
+            txOutputs: [new TransactionOutput()]
         } as Transaction);
 
-        const valid = tx.isValid();
+        const valid = tx.isValid(exampleDifficulty, exampleFee);
         expect(valid.success).toBeTruthy();
+    })
+
+    test('Should not be valid (txo hash != tx hash)', () => {
+        const tx = new Transaction({
+            txInputs: [new TransactionInput()],
+            txOutputs: [new TransactionOutput()]
+        } as Transaction);
+
+        tx.txOutputs[0].tx = "aoba";
+
+        const valid = tx.isValid(exampleDifficulty, exampleFee);
+        expect(valid.success).toBeFalsy();
+    })
+
+    test('Should not be valid (inputs < outputs)', () => {
+        const tx = new Transaction({
+            txInputs: [new TransactionInput({
+                amount: 1
+            } as TransactionInput)],
+            txOutputs: [new TransactionOutput({
+                amount: 2
+            } as TransactionOutput)]
+        } as Transaction);
+
+        const valid = tx.isValid(exampleDifficulty, exampleFee);
+        expect(valid.success).toBeFalsy();
     })
 
     test('Should not be valid (invalid hash)', () => {
         const tx = new Transaction({
-            txInput: new TransactionInput(),
-            to: 'carteiraTo',
+            txInputs: [new TransactionInput()],
+            txOutputs: [new TransactionOutput()],
             type: TransactionType.REGULAR,
             timestamp: Date.now(),
             hash: 'abc'
         } as Transaction);
 
-        const valid = tx.isValid();
+        const valid = tx.isValid(exampleDifficulty, exampleFee);
         expect(valid.success).toBeFalsy();
     })
 
     test('Should be valid (FEE)', () => {
         const tx = new Transaction({
-            txInput: new TransactionInput(),
-            to: 'carteiraTo',
+            txOutputs: [new TransactionOutput()],
             type: TransactionType.FEE
         } as Transaction);
 
-        tx.txInput = undefined;
+        tx.txInputs = undefined;
         tx.hash = tx.getHash();
 
-        const valid = tx.isValid();
+        const valid = tx.isValid(exampleDifficulty, exampleFee);
         expect(valid.success).toBeTruthy();
     })
 
     test('Should not be valid (invalid to)', () => {
         const tx = new Transaction();
-        const valid = tx.isValid();
+        const valid = tx.isValid(exampleDifficulty, exampleFee);
         expect(valid.success).toBeFalsy();
     })
 
     test('Should not be valid (invalid txInput)', () => {
         const tx = new Transaction({
-            to: 'carteiraTo',
-            txInput: new TransactionInput({
+            txOutputs: [new TransactionOutput()],
+            txInputs: [new TransactionInput({
                 amount: -10,
                 fromAddress: 'carteiraFrom',
                 signature: 'abc'
-            } as TransactionInput)
+            } as TransactionInput)]
         } as Transaction);
-        const valid = tx.isValid();
+        const valid = tx.isValid(exampleDifficulty, exampleFee);
         expect(valid.success).toBeFalsy();
     })
-    
+
+    test('Should get fee', () => {
+        const txIn = new TransactionInput({
+            amount: 11,
+            fromAddress: alice.publicKey,
+            previousTx: exampleTx
+        } as TransactionInput)
+        txIn.sign(alice.privateKey);
+
+        const txOut = new TransactionOutput({
+            amount: 10,
+            toAddress: bob.publicKey,
+        } as TransactionOutput);
+
+        const tx = new Transaction({
+            txInputs: [txIn],
+            txOutputs: [txOut]
+        } as Transaction)
+
+        const result = tx.getFee();
+
+        expect(result).toBeGreaterThan(0);
+    })
+
+    test('Should get zero fee', () => {
+        const tx = new Transaction();
+        tx.txInputs = undefined;
+        const result = tx.getFee();
+        expect(result).toEqual(0);
+    })
+
+    test('Should create from reward', () => {
+        const tx = Transaction.fromReward({
+            amount: 10,
+            toAddress: alice.publicKey,
+            tx: exampleTx
+        } as TransactionOutput);
+        
+        const result = tx.isValid(exampleDifficulty, exampleFee);
+        expect(result.success).toBeTruthy();
+    })
+
+    test('Should not be valid (fee excess)', () => {
+        const txOut = new TransactionOutput({
+            amount: Number.MAX_VALUE,
+            toAddress: bob.publicKey,
+        } as TransactionOutput);
+
+        const tx = new Transaction({
+            type: TransactionType.FEE,
+            txOutputs: [txOut]
+        } as Transaction)
+        
+        const result = tx.isValid(exampleDifficulty, exampleFee);
+        expect(result.success).toBeFalsy();
+    })
 })
