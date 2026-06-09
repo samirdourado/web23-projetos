@@ -32,7 +32,7 @@ export default class Blockchain {
     }
 
     getLastBlock(): Block {
-        return this.blocks[this.blocks.length -1];
+        return this.blocks[this.blocks.length -1]!;
     }
 
     addBlock(block: Block): Validation {

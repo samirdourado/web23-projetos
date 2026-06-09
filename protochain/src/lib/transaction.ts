@@ -46,7 +46,6 @@ export default class Transaction {
 
     getFee(): number {
         let inputSum: number = 0, outputSum: number = 0;
-
         if (this.txInputs && this.txInputs.length) {
             inputSum = this.txInputs.map(txi => txi.amount).reduce((a, b) => a + b);
 
@@ -60,7 +59,7 @@ export default class Transaction {
     }
 
     isValid(difficulty: number, totalFees: number): Validation {
-        if(this.hash !== this.getHash())
+        if (this.hash !== this.getHash())
             return new Validation(false, "Invalid hash.");
 
         if (!this.txOutputs || !this.txOutputs.length || this.txOutputs.map(txo => txo.isValid()).some(v => !v.success))
@@ -68,28 +67,27 @@ export default class Transaction {
 
         if (this.txInputs && this.txInputs.length) {
             const validations = this.txInputs.map(txi => txi.isValid()).filter(v => !v.success);
-
             if (validations && validations.length) {
-                const message = validations.map(v => v).join(" ");
+                const message = validations.map(v => v.message).join(" ");
                 return new Validation(false, `Invalid tx: ${message}`);
             }
 
             const inputSum = this.txInputs.map(txi => txi.amount).reduce((a, b) => a + b, 0);
-            const outputSum = this.txOutputs.map(txo => txo.amount).reduce((a, b) => a + b, 0);
-            if (inputSum < outputSum)
-                return new Validation(false, `Invalid tx: input amounts must be equals or greater than outputs amounts.`)
+            const inputOutput = this.txOutputs.map(txo => txo.amount).reduce((a, b) => a + b, 0);
+            if (inputSum < inputOutput)
+                return new Validation(false, `Invalid tx: input amounts must be equals or greater than outputs amounts.`);
         }
 
         if (this.txOutputs.some(txo => txo.tx !== this.hash))
-            return new Validation(false, `Invalid txo reference hash.`);
+            return new Validation(false, `Invalid TXO reference hash.`);
 
         if (this.type === TransactionType.FEE) {
-            const txo = this.txOutputs[0];
+            const txo = this.txOutputs[0]!;
             if (txo.amount > Blockchain.getRewardAmount(difficulty) + totalFees)
-                return new Validation(false, `Invalid tx reward.`)
+                return new Validation(false, `Invalid tx reward.`);
         }
 
-        return new Validation;
+        return new Validation();
     }
 
     static fromReward(txo: TransactionOutput): Transaction {

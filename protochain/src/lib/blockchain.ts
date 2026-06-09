@@ -96,7 +96,6 @@ export default class Blockchain {
 
         const txs = block.transactions.filter(tx => tx.type !== TransactionType.FEE).map(tx => tx.hash);
         const newMempool = this.mempool.filter(tx => !txs.includes(tx.hash));
-
         if (newMempool.length + txs.length !== this.mempool.length)
             return new Validation(false, `Invalid tx in block: mempool.`);
         
@@ -132,14 +131,13 @@ export default class Blockchain {
     }
 
     isValid(): Validation {
-        for(let i = this.blocks.length - 1; i > 0; i--) {
-            const currentBlock = this.blocks[i];
-            const previousBlock = this.blocks[i-1];
+        for (let i = this.blocks.length - 1; i > 0; i--) {
+            const currentBlock = this.blocks[i]!;
+            const previousBlock = this.blocks[i - 1]!;
             const validation = currentBlock.isValid(previousBlock.hash, previousBlock.index, this.getDifficulty(), this.getFeePerTx());
-            if (!validation.success) 
-            return new Validation(false, `Invalid block #${currentBlock.index}: ${validation.message}`);
+            if (!validation.success)
+                return new Validation(false, `Invalid block #${currentBlock.index}: ${validation.message}`);
         }
-
         return new Validation();
     }
 
